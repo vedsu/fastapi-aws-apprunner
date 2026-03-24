@@ -1,9 +1,24 @@
 from fastapi import FastAPI
 from pymongo import MongoClient
+import boto3
+import json
 app = FastAPI(title="My First FastAPI on AWS")
-# 🔹 Hardcoded MongoDB connection string
-MONGO_URI = "mongodb+srv://Vedsu:CVxB6F2N700cQ0qu@cluster0.thbmwqi.mongodb.net/webinarprof"
+def get_mongo_uri():
+    secret_name = "pharmaprofsbackend"
+    region_name = "us-east-1"
+
+    session = boto3.session.Session()
+    client = session.client(
+        service_name="secretsmanager",
+        region_name=region_name
+    )
+
+    response = client.get_secret_value(SecretId=secret_name)
+    secret_data = json.loads(response["SecretString"])
+
+    return secret_data["CONNECTION_STRING"]
 # 🔹 Initialize Mongo client
+MONGO_URI = get_mongo_uri()
 client = MongoClient(MONGO_URI)
 db = client["webinarprof"]
 collection = db["webinar_data"]
