@@ -30,3 +30,8 @@ def get_webinars():
             "status": "error",
             "message": str(e)
         }
+@app.get("/routes-check")
+def routes_check():
+    return {
+        "routes": ["/", "/health", "/webinars"]
+    }
