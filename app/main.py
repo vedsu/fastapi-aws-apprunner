@@ -12,11 +12,25 @@ def get_mongo_uri():
         service_name="secretsmanager",
         region_name=region_name
     )
+    try:
+        response = client.get_secret_value(
+            SecretId=secret_name
+        )
+        secret_string = response["SecretString"]
+        secret_data = json.loads(secret_string)
 
-    response = client.get_secret_value(SecretId=secret_name)
-    secret_data = json.loads(response["SecretString"])
+        return secret_data["CONNECTION_STRING"]
+    except ClientError as e:
+        # For a list of exceptions thrown, see
+        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+        raise e
 
-    return secret_data["CONNECTION_STRING"]
+    # secret = get_secret_value_response['SecretString']
+
+    # response = client.get_secret_value(SecretId=secret_name)
+    # secret_data = json.loads(response["SecretString"])
+
+    # return secret_data["CONNECTION_STRING"]
 # 🔹 Initialize Mongo client
 MONGO_URI = get_mongo_uri()
 client = MongoClient(MONGO_URI)
