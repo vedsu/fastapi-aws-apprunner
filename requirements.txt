@@ -1,2 +1,4 @@
 fastapi
 uvicorn[standard]
+Flask-PyMongo==2.3.0
+pymongo==4.7.3
